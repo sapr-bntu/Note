@@ -7,16 +7,8 @@ QT += core \
 TARGET = note
 TEMPLATE = app
 SOURCES += main.cpp \
-    mainwindow.cpp\
-       delegat.cpp \
-    delegat.cpp
-HEADERS += mainwindow.h\
-    conn.h \
-    delegat.h \
-    conn.h \
-    delegat.h \
-    conn.h \
-    delegat.h
+    mainwindow.cpp
+HEADERS += mainwindow.h
 FORMS += mainwindow.ui
 
 RESOURCES += \

@@ -28,10 +28,11 @@ private:
 
 private slots:
     void showHide(QSystemTrayIcon::ActivationReason);
-    void ToDate();
+//    void ToDate();
     void Add();
     void Delete();
     void Update();
+    void on_calendarWidget_clicked(const QDate &date);
 };
 
 #endif // MAINWINDOW_H

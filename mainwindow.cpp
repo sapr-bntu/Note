@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "conn.h"
 #include <QtSql>
 #include <QtDebug>
 #include <QtGui>
@@ -9,7 +8,6 @@
 #include <QSqlError>
 #include <QTableView>
 #include <QDebug>
-#include "delegat.h"
 #include <QSqlTableModel>
 #include <QMessageBox>
 
@@ -18,14 +16,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-//     createConnection();
 
     trIcon = new QSystemTrayIcon();
     trIcon->setIcon(QIcon(":/img/icon.png"));
     trIcon->show();
 
 
-    qDebug()<<"first";
+
     if (!QFile::exists("Note.s3db") )
     {
         qDebug()<<"Фаил не существует";
@@ -43,11 +40,9 @@ MainWindow::MainWindow(QWidget *parent) :
         }
         QSqlQuery query;
         query.exec("CREATE TABLE [note_table] ([id] INTEGER  PRIMARY KEY AUTOINCREMENT NOT NULL,[note] TEXT  NULL,[date] VARCHAR(8)  NOT NULL)");
- //        query.exec("CREATE TABLE Note (Title VARCHAR(60) )");   /*,[Time] DATE DEFAULT CURRENT_DATE NULL,[Text] TEXT  NULL)");*/
     }
     else
     {
-        qDebug()<<"second";
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
         db.setDatabaseName("Note.s3db");
         if (!db.open())
@@ -63,23 +58,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QCalendarWidget* cal=new QCalendarWidget;
     dat=cal->selectedDate();
-//    ui->dateEdit->setDate(dat);
-//    str=ui->dateEdit->text();
-    //ui->label->setText(str);
-//    QString string;
-//    string="date like '%"+str+"%'";
-//    ui->label_2->setText(string);
-//    QSqlQueryModel* query=new QSqlQueryModel;
-//    query->setQuery(string);
-
     model = new QSqlTableModel(this);
     model->setTable("note_table");
 //    model->setFilter(string);
     model->select();
     ui->tableView_3->setModel(model);
-//    ui->tableView->show();
-
-
 //    connect(ui->pushButton_4,SIGNAL(clicked()),this,SLOT(ToDate()));
     connect(ui->pushButtonAdd,SIGNAL(clicked()),this,SLOT(Add()));
     connect(ui->pushButtonDelete,SIGNAL(clicked()),this,SLOT(Delete()));
@@ -101,22 +84,7 @@ void MainWindow::showHide(QSystemTrayIcon::ActivationReason r) {
     }
 }
 
-void MainWindow::ToDate()
-{
-    dat = ui->calendarWidget->selectedDate();
-//    ui->dateEdit->setDate(dat);
-//    str=ui->dateEdit->text();
-    //ui->label_2->setText(str);
-    QString string;
-    string="date like '%"+str+"%'";
-    QSqlTableModel *model;
-    model = new QSqlTableModel(this);
-    model->setTable("note_table");
-//    model->setFilter(string);
-    model->select();
-    ui->tableView_3->setModel(model);
-//    ui->tableView->show();
-}
+
 
 void MainWindow::Add()
 {
@@ -181,4 +149,17 @@ void MainWindow::Update()
     model->select();
     ui->tableView_3->setModel(model);
 //    ui->tableView->show();
+}
+
+void MainWindow::on_calendarWidget_clicked(const QDate &date)
+{//бывший слот toDate
+//    dat = ui->calendarWidget->selectedDate();
+    QString string;
+    string="date like '%"+date.toString()+"%'";
+    QSqlTableModel *model;
+    model = new QSqlTableModel(this);
+    model->setTable("note_table");
+    model->setFilter(string);
+    model->select();
+    ui->tableView_3->setModel(model);
 }
