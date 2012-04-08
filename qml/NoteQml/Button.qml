@@ -21,7 +21,7 @@ Rectangle {
         id: textItem
         anchors.centerIn: parent
         font.pointSize: 15
-        color: "white"
+        color: "Red"
     }
     MouseArea {
         id: mouseArea
