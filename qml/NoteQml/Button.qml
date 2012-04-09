@@ -6,7 +6,7 @@ Rectangle {
 
     signal clicked
 
-    width: 130; height: 60
+    width: 100; height: 50
     border.width: 1
     radius: 5
     smooth: true
