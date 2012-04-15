@@ -37,3 +37,6 @@ include(qmlapplicationviewer/qmlapplicationviewer.pri)
 qtcAddDeployment()
 
 RESOURCES +=
+
+OTHER_FILES += \
+    drawer.qml
