@@ -26,6 +26,8 @@ Rectangle {
     MouseArea {
         id: mouseArea
         anchors.fill: parent
+        onEntered: parent.border.color = Qt.lighter("#6A6D6A")
+        onExited:  parent.border.color = "#6A6D6A"
         onClicked: {
 //            doOp(operation)
             button.clicked()
