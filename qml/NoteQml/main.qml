@@ -303,6 +303,7 @@ Rectangle{
             }
         }
 }
+
     states:[
         State {
             name: "add"
@@ -487,6 +488,28 @@ Rectangle{
                 target: delScreen
                 y: 0
             }
+        }
+    ]
+
+    transitions: [
+        Transition {
+            to: "show"
+            NumberAnimation { target: showScreen; properties: "x"; duration: 150; easing.type: Easing.OutExpo }
+        },
+        Transition {
+            to: "add"
+            NumberAnimation { target: addScreen; properties: "x"; duration: 150; easing.type: Easing.OutExpo }
+            NumberAnimation { target: rectangle3; properties: "x"; duration: 150; easing.type: Easing.OutExpo }
+        },
+        Transition {
+            to: "update"
+            NumberAnimation { target: updateScreen; properties: "x"; duration: 150; easing.type: Easing.OutExpo }
+            NumberAnimation { target: rectangle8; properties: "x"; duration: 150; easing.type: Easing.OutExpo }
+        },
+        Transition {
+            to: "del"
+            NumberAnimation { target: delScreen; properties: "x"; duration: 150; easing.type: Easing.OutExpo }
+            NumberAnimation { target: rectangle7; properties: "x"; duration: 150; easing.type: Easing.OutExpo }
         }
     ]
 
