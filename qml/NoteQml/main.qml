@@ -17,6 +17,29 @@ Rectangle{
         }
     }
 
+    function enterDate()
+    {
+        if(text_edit1.text=="")
+        {
+            return true
+        }
+        else
+        {
+            return false
+        }
+    }
+
+    function enterDateAdd()
+    {
+        if(text_edit2.text=="")
+        {
+            return true
+        }
+        else
+        {
+            return false
+        }
+    }
 
     Column {
         id: column1
@@ -24,6 +47,39 @@ Rectangle{
         y: 0
         width: 2*rectangle1.width/3
         height: rectangle1.height
+
+        function dbAdd() {
+            var db = openDatabaseSync("QDeclarativeExampleDB", "1.0", "The Example QML SQL!", 1000000);
+
+            db.transaction(
+                        function(tx) {
+                            // Create the database if it doesn't already exist
+                            tx.executeSql('CREATE TABLE IF NOT EXISTS [note] ([id] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,'+
+                                          '[date] VARCHAR(255) NOT NULL,'+
+                                          '[textnote] TEXT  NULL);');
+
+                            // Add (another) greeting row
+                            tx.executeSql("insert into note ('date', 'textnote') values ("+text_edit2.text+" , "+ text_edit4.text+");");
+                        }
+                        )
+        }
+        function dbShow() {
+            var db = openDatabaseSync("QDeclarativeExampleDB", "1.0", "The Example QML SQL!", 1000000);
+
+           db.transaction(
+                        function(tx) {
+
+                            // Show all added greetings
+                           var rs = tx.executeSql('SELECT * FROM note');
+
+                            var r = ""
+                            for(var i = 0; i < rs.rows.length; i++) {
+                                r += i+" "+rs.rows.item(i).id + ", " + rs.rows.item(i).date + ", " + rs.rows.item(i).text  + "\n"
+                            }
+                            txt.text = r
+                        }
+                        )
+        }
 
 
         Rectangle {
@@ -116,6 +172,14 @@ Rectangle{
                     anchors.centerIn: parent
                     text: "Add note"
                     onClicked: {
+                        if(rectangle1.enterDateAdd())
+                        {
+                            text_edit2.text="Enter date!!!"
+                        }
+                        else
+                        {
+                            column1.dbAdd()
+                        }
                     }
                 }
             }
@@ -135,6 +199,7 @@ Rectangle{
             y: 0
             onClicked:{
                 rectangle1.state="show"
+                listView.dbshow()
             }
         }
 
@@ -234,7 +299,8 @@ Rectangle{
                 anchors.centerIn: parent
                 text:"Dalete by date"
                 onClicked: {
-
+                    if(rectangle1.enterDate())
+                        text_edit1.text="Enter date!!!"
                     }
             }
 
@@ -296,10 +362,104 @@ Rectangle{
                     anchors.centerIn: parent
                     text:"Update by date"
                     onClicked: {
-
+                        if(rectangle1.enterDate())
+                            text_edit1.text="Enter date!!!"
                         }
                 }
 
+            }
+        }
+
+        Rectangle {
+            id: rectangle10
+            x: 48
+            y: 0
+            width: column1.width-64
+            height: column1.height
+            gradient: Gradient {
+                GradientStop {
+                    position: 0.00;
+                    color: "#28282f";
+                }
+                GradientStop {
+                    position: 0.99;
+                    color: "#c8c8c8";
+                }
+            }
+
+            Component {
+                id: petDelegate
+                Item {
+                    id: wrapper
+                    width: 200; height: 55
+                    Column {
+                        Text { text: 'Имя: ' + id }
+                        Text { text: 'Отчество: ' + date }
+                        Text { text: 'Фамилия: ' + textnote }
+                    }
+                    // indent the item if it is the current item
+                    states: State {
+                        name: "Current"
+                        when: wrapper.ListView.isCurrentItem
+                        PropertyChanges { target: wrapper; x: 20 }
+                    }
+                    transitions: Transition {
+                        NumberAnimation { properties: "x"; duration: 200 }
+                    }
+                }
+            }
+
+            // Define a highlight with customised movement between items.
+            Component {
+                id: highlightBar
+                Rectangle {
+                    color: "lightsteelblue"; radius: 5
+                    width: 200; height: 50
+                    y: listView.currentItem.y;
+                    Behavior on y { SpringAnimation { spring: 2; damping: 0.1 } }
+                }
+            }
+
+            ListView {
+                id: listView
+                x: 0
+                y: 0
+                width: rectangle10.width
+                height:rectangle10.height
+
+                model: ListModel {
+                    id: listModel
+                }
+                delegate: petDelegate
+                focus: true
+
+                // Set the highlight delegate. Note we must also set highlightFollowsCurrentItem
+                // to false so the highlight delegate can control how the highlight is moved.
+                highlight: highlightBar
+                highlightFollowsCurrentItem: false
+
+                function dbshow()
+                {
+                    var db = openDatabaseSync("QDeclarativeExampleDB", "1.0", "The Example QML SQL!", 1000000);
+
+                    db.transaction(
+                                function(tx) {
+
+                                    // Show all added greetings
+                                    var rs = tx.executeSql('SELECT * FROM note');
+                                    for(var i = 0; i < rs.rows.length; i++) {
+                                        var data = {'id':rs.rows.item(i).id, 'date': rs.rows.item(i).date, 'textnote': rs.rows.item(i).textnote};
+                                        listModel.append(data)
+
+                                    }
+                                    listModel.sync()
+                                }
+                                )
+                }
+
+                Component.onCompleted: {
+                    dbshow()
+                }
             }
         }
 }
@@ -342,7 +502,7 @@ Rectangle{
             PropertyChanges { target: rectangle7; x:-width-100 }
             PropertyChanges { target: rectangle8; x:-width-100 }
             PropertyChanges { target: rectangle5; x: -width-100 ;y: 0 }
-            PropertyChanges { target: showScreen; x: column1.width-16}
+            PropertyChanges { target: showScreen; x: column1.width-16 ;y: 0}
             PropertyChanges { target: arrowIcon_add; rotation: 0 }
             PropertyChanges { target: arrowIcon_show; rotation: 180 }
 
@@ -364,6 +524,12 @@ Rectangle{
             PropertyChanges {
                 target: delScreen
                 y: 0
+            }
+
+            PropertyChanges {
+                target: rectangle10
+                y: 0
+                opacity: 1
             }
         },
         State {
@@ -537,6 +703,7 @@ Rectangle{
             text:"Show"
             onClicked: {
                     rectangle1.state = "show"
+                    listView.dbshow()
             }
         }
 
@@ -583,7 +750,6 @@ Rectangle {
                 y: 0
                 width: rectangle2.width
                 height: rectangle2.height
-                //text: qsTr("text edit")
                 font.pixelSize: 15
             }
 }
