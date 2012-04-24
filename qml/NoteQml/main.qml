@@ -41,6 +41,27 @@ Rectangle{
         }
     }
 
+    function dbUpdate() {
+        var db = openDatabaseSync("QDeclarativeExampleDB", "1.0", "The Example QML SQL!", 1000000);
+
+        db.transaction(
+                    function(tx) {
+
+                        var rs=tx.executeSql("update note set textnote='"+text_edit3.text+"' where date= ?",[text_edit1.text]);
+                    }
+                    )
+    }
+
+    function dbDelete() {
+        var db = openDatabaseSync("QDeclarativeExampleDB", "1.0", "The Example QML SQL!", 1000000);
+
+        db.transaction(
+                    function(tx) {
+                        var rs=tx.executeSql("delete from note where date= ?",[text_edit1.text]);
+                    }
+                    )
+    }
+
     Column {
         id: column1
         x: 0
@@ -55,14 +76,15 @@ Rectangle{
                         function(tx) {
                             // Create the database if it doesn't already exist
                             tx.executeSql('CREATE TABLE IF NOT EXISTS [note] ([id] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,'+
-                                          '[date] VARCHAR(255) NOT NULL,'+
+                                          '[date] INTEGER NOT NULL,'+
                                           '[textnote] TEXT  NULL);');
 
                             // Add (another) greeting row
-                            tx.executeSql("insert into note ('date', 'textnote') values ("+text_edit2.text+" , "+ text_edit4.text+");");
+                            tx.executeSql("insert into note ('date', 'textnote') values ("+text_edit2.text+" , '"+ text_edit4.text+"');");
                         }
                         )
         }
+
         function dbShow() {
             var db = openDatabaseSync("QDeclarativeExampleDB", "1.0", "The Example QML SQL!", 1000000);
 
@@ -85,7 +107,7 @@ Rectangle{
         Rectangle {
             id: rectangle3
             x: 0
-            y: 0
+            y: 64
             width: column1.width-60
             height: column1.height
             visible: true
@@ -197,8 +219,10 @@ Rectangle{
             }
             x: 48
             y: 0
+            z: 1
             onClicked:{
                 rectangle1.state="show"
+                listModel.clear()
                 listView.dbshow()
             }
         }
@@ -214,6 +238,7 @@ Rectangle{
             }
             x: 32
             y: 0
+            z: 1
             onClicked:{
                 rectangle1.state="add"
             }
@@ -230,6 +255,7 @@ Rectangle{
             }
             x: 16
             y: 0
+            z: 1
             onClicked:{
                 rectangle1.state="update"
             }
@@ -246,6 +272,7 @@ Rectangle{
             }
             x: 0
             y: 0
+            z: 1
             onClicked:{
                 rectangle1.state="del"
             }
@@ -300,7 +327,10 @@ Rectangle{
                 text:"Dalete by date"
                 onClicked: {
                     if(rectangle1.enterDate())
+                    {
                         text_edit1.text="Enter date!!!"
+                    }
+                    else dbDelete()
                     }
             }
 
@@ -363,8 +393,12 @@ Rectangle{
                     text:"Update by date"
                     onClicked: {
                         if(rectangle1.enterDate())
+                        {
                             text_edit1.text="Enter date!!!"
                         }
+                        else dbUpdate()
+                        }
+
                 }
 
             }
@@ -393,9 +427,9 @@ Rectangle{
                     id: wrapper
                     width: 200; height: 55
                     Column {
-                        Text { text: 'Имя: ' + id }
-                        Text { text: 'Отчество: ' + date }
-                        Text { text: 'Фамилия: ' + textnote }
+                        Text { text: '#: ' + id }
+                        Text { text: 'Date: ' + date }
+                        Text { text: 'Note: ' + textnote }
                     }
                     // indent the item if it is the current item
                     states: State {
@@ -422,7 +456,7 @@ Rectangle{
 
             ListView {
                 id: listView
-                x: 0
+                x: 48
                 y: 0
                 width: rectangle10.width
                 height:rectangle10.height
@@ -441,7 +475,6 @@ Rectangle{
                 function dbshow()
                 {
                     var db = openDatabaseSync("QDeclarativeExampleDB", "1.0", "The Example QML SQL!", 1000000);
-
                     db.transaction(
                                 function(tx) {
 
@@ -471,28 +504,33 @@ Rectangle{
             PropertyChanges { target: rectangle7; x:-width-100 }
             PropertyChanges { target: rectangle8; x:-width-100 }
             PropertyChanges { target: rectangle5; x: -width-100 ;y: 0 }
-            PropertyChanges { target: addScreen; x: column1.width-32 }
-            PropertyChanges { target: showScreen; x: column1.width-16}
+            PropertyChanges { target: rectangle10; x: -width-100 ;y: 0 }
+            //PropertyChanges { target: addScreen; x: column1.width-32 ;y: 0 }
+            //PropertyChanges { target: showScreen; x: column1.width-16 ; y: 0;}
             PropertyChanges { target: arrowIcon_add; rotation: 180 }
             PropertyChanges { target: arrowIcon_show; rotation: 0 }
 
             PropertyChanges {
                 target: showScreen
+                x: column1.width-16
                 y: 0
             }
 
             PropertyChanges {
                 target: addScreen
+                x: column1.width-32
                 y: 0
             }
 
             PropertyChanges {
                 target: updateScreen
+                x: 16
                 y: 0
             }
 
             PropertyChanges {
                 target: delScreen
+                x: 0
                 y: 0
             }
         },
@@ -502,22 +540,26 @@ Rectangle{
             PropertyChanges { target: rectangle7; x:-width-100 }
             PropertyChanges { target: rectangle8; x:-width-100 }
             PropertyChanges { target: rectangle5; x: -width-100 ;y: 0 }
-            PropertyChanges { target: showScreen; x: column1.width-16 ;y: 0}
+            PropertyChanges { target: rectangle10; x: 48 ;y: 0 }
+            //PropertyChanges { target: showScreen; x: column1.width-16 ;y: 0}
             PropertyChanges { target: arrowIcon_add; rotation: 0 }
             PropertyChanges { target: arrowIcon_show; rotation: 180 }
 
             PropertyChanges {
                 target: showScreen
+                x: column1.width-16
                 y: 0
             }
 
             PropertyChanges {
                 target: addScreen
+                x: 32
                 y: 0
             }
 
             PropertyChanges {
                 target: updateScreen
+                x: 16
                 y: 0
             }
 
@@ -528,8 +570,8 @@ Rectangle{
 
             PropertyChanges {
                 target: rectangle10
+                x: 0
                 y: 0
-                opacity: 1
             }
         },
         State {
@@ -538,29 +580,35 @@ Rectangle{
             PropertyChanges { target: rectangle8; x:16;y:0 }
             PropertyChanges { target: rectangle3; x:-width-100 }
             PropertyChanges { target: rectangle5; x: -width-100 ;y: 0 }
-            PropertyChanges { target: addScreen; x: column1.width-32 ;y: 0 }
-            PropertyChanges { target: showScreen; x: column1.width-16 ;y: 0}
-            PropertyChanges { target: updateScreen; x: column1.width-48 ;y: 0}
+            PropertyChanges { target: rectangle10; x: -width-100 ;y: 0 }
+           // PropertyChanges { target: addScreen; x: column1.width-32 ;y: 0 }
+           // PropertyChanges { target: showScreen; x: column1.width-16 ;y: 0}
+           // PropertyChanges { target: updateScreen; x: column1.width-48 ;y: 0}
             PropertyChanges { target: arrowIcon_add; rotation: 0 }
             PropertyChanges { target: arrowIcon_show; rotation: 0 }
             PropertyChanges { target: arrowIcon_update; rotation: 180 }
+
             PropertyChanges {
                 target: showScreen
+                x: column1.width-16
                 y: 0
             }
 
             PropertyChanges {
                 target: addScreen
+                x: column1.width-32
                 y: 0
             }
 
             PropertyChanges {
                 target: updateScreen
+                x: column1.width-48
                 y: 0
             }
 
             PropertyChanges {
                 target: delScreen
+                x: 0
                 y: 0
             }
 
@@ -597,31 +645,37 @@ Rectangle{
             PropertyChanges { target: rectangle8; x:-width-100 }
             PropertyChanges { target: rectangle3; x:-width-100 }
             PropertyChanges { target: rectangle5; x: -width-100 ;y: 0 }
-            PropertyChanges { target: addScreen; x: column1.width-32 ;y: 0 }
-            PropertyChanges { target: showScreen; x: column1.width-16 ;y: 0}
-            PropertyChanges { target: updateScreen; x: column1.width-48 ;y: 0}
-            PropertyChanges { target: delScreen; x: column1.width-64 ;y: 0}
+            PropertyChanges { target: rectangle10; x: -width-100 ;y: 0 }
+//            PropertyChanges { target: addScreen; x: column1.width-32 ;y: 0 }
+//            PropertyChanges { target: showScreen;  ;y: 0}
+//            PropertyChanges { target: updateScreen; x: column1.width-48 ;y: 0}
+//            PropertyChanges { target: delScreen; x: column1.width-64 ;y: 0}
             PropertyChanges { target: arrowIcon_add; rotation: 0 }
             PropertyChanges { target: arrowIcon_show; rotation: 0 }
             PropertyChanges { target: arrowIcon_update; rotation: 0 }
             PropertyChanges { target: arrowIcon_del; rotation: 180 }
+
             PropertyChanges {
                 target: showScreen
+                x: column1.width-16
                 y: 0
             }
 
             PropertyChanges {
                 target: addScreen
+                x: column1.width-32
                 y: 0
             }
 
             PropertyChanges {
                 target: updateScreen
+                x: column1.width-48
                 y: 0
             }
 
             PropertyChanges {
                 target: delScreen
+                x: column1.width-64
                 y: 0
             }
 
@@ -635,23 +689,28 @@ Rectangle{
             name: "main"
             PropertyChanges { target: rectangle3; x:-width-100 }
             PropertyChanges { target: rectangle5; x: 64 ;y: 0 }
+
             PropertyChanges {
                 target: showScreen
+                x: 48
                 y: 0
             }
 
             PropertyChanges {
                 target: addScreen
+                x: 32
                 y: 0
             }
 
             PropertyChanges {
                 target: updateScreen
+                x: 16
                 y: 0
             }
 
             PropertyChanges {
                 target: delScreen
+                x: 0
                 y: 0
             }
         }
@@ -661,6 +720,7 @@ Rectangle{
         Transition {
             to: "show"
             NumberAnimation { target: showScreen; properties: "x"; duration: 150; easing.type: Easing.OutExpo }
+            NumberAnimation { target: rectangle10; properties: "x"; duration: 150; easing.type: Easing.OutExpo }
         },
         Transition {
             to: "add"
@@ -686,51 +746,52 @@ Rectangle{
         width: rectangle1.width/3
         height: rectangle1.height
 
+
+
+        Button{
+            id: buttonShow
+            x: column2.width/4
+            y: 40
+            text:"Show"
+            onClicked: {
+                    rectangle1.state = "show"
+                    listModel.clear()
+                    listView.dbshow()
+            }
+        }
         Button{
             id: buttonAdd
             x: column2.width/4
-            y: 2*column2.height/8+5
+            y: 95
             text:"Add"
             onClicked: {
                     rectangle1.state = "add"
                 }
         }
 
-        Button{
-            id: buttonShow
-            x: column2.width/4
-            y: column2.height/8+5
-            text:"Show"
-            onClicked: {
-                    rectangle1.state = "show"
-                    listView.dbshow()
-            }
-        }
-
-        Button{
-            id: buttonDel
-            x: column2.width/4
-            y: 4*column2.height/8+5
-            text:"Delete"
-            onClicked: {
-                rectangle1.state="del"
-            }
-        }
 
         Button{
             id: buttonUpdate
             x: column2.width/4
-            y: 3*column2.height/8+5
+            y: 150
             text:"Update"
             onClicked: {
                 rectangle1.state="update"
             }
         }
-
+        Button{
+            id: buttonDel
+            x: column2.width/4
+            y: 205
+            text:"Delete"
+            onClicked: {
+                rectangle1.state="del"
+            }
+        }
         Text {
             id: text1
             x: column2.width/4
-            y: 5*column2.height/8+5
+            y: 260
             text: qsTr("Enter date:")
             font.pixelSize: 15
             color: "white"
@@ -739,7 +800,7 @@ Rectangle{
 Rectangle {
         id: rectangle2
         x: column2.width/4
-        y: 6*column2.height/8
+        y: 280
             width: 100
             height: 20
             color: "#ffffff"
@@ -752,6 +813,27 @@ Rectangle {
                 height: rectangle2.height
                 font.pixelSize: 15
             }
+}
+
+Text {
+    id: text3
+    x: column2.width/4
+    y: 271
+    text: qsTr("Current date:")
+    color: "white"
+    font.pixelSize: 15
+}
+
+TextEdit {
+    id: text_edit5
+    x: column2.width/4
+    y: 271
+    width: 100
+    height: 20
+    text: Qt.formatDateTime(new Date(), "ddMMyy")
+    readOnly: true
+    font.pixelSize: 15
+    color: "red"
 }
     }
 
