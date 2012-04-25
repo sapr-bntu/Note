@@ -201,6 +201,8 @@ Rectangle{
                         else
                         {
                             column1.dbAdd()
+                            text_edit2.text=""
+                            text_edit4.text=""
                         }
                     }
                 }
@@ -215,6 +217,7 @@ Rectangle{
                 source: "./images/arrow.png"
 
                 anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
                 Behavior{ NumberAnimation { property: "rotation"; easing.type: Easing.OutExpo } }
             }
             x: 48
@@ -234,6 +237,7 @@ Rectangle{
                 source: "./images/arrow.png"
 
                 anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
                 Behavior{ NumberAnimation { property: "rotation"; easing.type: Easing.OutExpo } }
             }
             x: 32
@@ -251,6 +255,7 @@ Rectangle{
                 source: "./images/arrow.png"
 
                 anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
                 Behavior{ NumberAnimation { property: "rotation"; easing.type: Easing.OutExpo } }
             }
             x: 16
@@ -268,6 +273,7 @@ Rectangle{
                 source: "./images/arrow.png"
 
                 anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
                 Behavior{ NumberAnimation { property: "rotation"; easing.type: Easing.OutExpo } }
             }
             x: 0
@@ -330,7 +336,11 @@ Rectangle{
                     {
                         text_edit1.text="Enter date!!!"
                     }
-                    else dbDelete()
+                    else
+                    {
+                        dbDelete()
+                        text_edit1.text=""
+                    }
                     }
             }
 
@@ -396,7 +406,12 @@ Rectangle{
                         {
                             text_edit1.text="Enter date!!!"
                         }
-                        else dbUpdate()
+                        else
+                        {
+                            dbUpdate()
+                            text_edit1.text=""
+                            text_edit3.text=""
+                        }
                         }
 
                 }
