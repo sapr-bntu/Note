@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="fa18768d-d7b7-4d00-a19c-525c0beb0a16" Name="note" Language="1033" Version="1.0.0.0" Manufacturer="note" UpgradeCode="74d5d7ca-6ee9-4e68-9653-5bb993f6c8fe">
+    <Package InstallerVersion="200" Compressed="yes" />
+
+    <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="DesktopFolder" Name="Desktop"/>
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLLOCATION" Name="note">
+          <Directory Id="sqldrivers" Name="sqldrivers">
+            <Component Id="ProductComponent1" Guid="253deb0f-9332-4be0-87a9-7ad47c31940f">
+              <File Id="plugin" Source="$(var.SolutionDir)\noteInstaller\qsqlite4.dll"/>
+            </Component>
+          </Directory>
+          <Component Id="ProductComponent" Guid="845deb0f-9332-4be0-87a9-7ad47c31940f">
+            <File Id="note" Source="$(var.SolutionDir)\noteInstaller\note.exe"/>
+            <File Id="QtCore" Source="$(var.SolutionDir)\noteInstaller\QtCore4.dll"/>
+            <File Id="QtGui" Source="$(var.SolutionDir)\noteInstaller\QtGui4.dll"/>
+            <File Id="QtSql" Source="$(var.SolutionDir)\noteInstaller\QtSql4.dll"/>
+            <File Id="MSVCP100" Source="$(var.SolutionDir)\noteInstaller\msvcp100.dll"/>
+            <File Id="MSVCR100" Source="$(var.SolutionDir)\noteInstaller\msvcr100.dll"/>
+            <Shortcut  Id="DesktopShortcut" Directory="DesktopFolder" Advertise="yes" Name="note" Icon="note.exe" WorkingDirectory="INSTALLLOCATION" >
+              <Icon Id="note.exe" SourceFile="$(var.SolutionDir)\noteInstaller\w.ico" />
+            </Shortcut>
+          </Component>
+
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <Feature Id="ProductFeature" Title="note" Level="1">
+      <!-- TODO: Remove the comments around this ComponentRef element and the Component above in order to add resources to this installer. -->
+      <!-- <ComponentRef Id="ProductComponent" /> -->
+
+      <!-- Note: The following ComponentGroupRef is required to pull in generated authoring from project references. -->
+      <ComponentRef Id="ProductComponent" />
+      <ComponentRef Id="ProductComponent1" />
+      <ComponentGroupRef Id="Product.Generated" />
+    </Feature>
+  </Product>
+</Wix>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="fa18768d-d7b7-4d00-a19c-525c0beb0a16" Name="noteQML" Language="1033" Version="1.0.0.0" Manufacturer="noteQML" UpgradeCode="74d5d7ca-6ee9-4e68-9653-5bb993f6c8fe">
+    <Package InstallerVersion="200" Compressed="yes" />
+
+    <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="DesktopFolder" Name="Desktop"/>
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLLOCATION" Name="noteQML">
+          <Directory Id="sqldrivers" Name="sqldrivers">
+            <Component Id="ProductComponent1" Guid="253deb0f-9332-4be0-87a9-7ad47c31940f">
+              <File Id="plugin" Source="$(var.SolutionDir)\noteQmlInstaller\qsqlite4.dll"/>
+            </Component>
+          </Directory>
+          <Directory Id="qml" Name="qml">
+            <Directory Id="NoteQml" Name="NoteQml">
+              <Directory Id="images" Name="images">
+                <Component Id="Png" Guid="845deb0f-9332-4be0-87a9-7ad47c45240f">
+                  <File Id="arrow" Source="$(var.SolutionDir)\noteQmlInstaller\arrow.png"/>
+                </Component>
+              </Directory>
+              <Component Id="fileQml" Guid="812deb0f-9332-4be0-87a9-7ad47c45240f">
+                <File Id="Button" Source="$(var.SolutionDir)\noteQmlInstaller\Button.qml"/>
+                <File Id="Drawer" Source="$(var.SolutionDir)\noteQmlInstaller\Drawer.qml"/>
+                <File Id="main" Source="$(var.SolutionDir)\noteQmlInstaller\main.qml"/>
+              </Component>
+            </Directory>
+          </Directory>
+          <Component Id="ProductComponent" Guid="845deb0f-9332-4be0-87a9-7ad47c31940f">
+            <File Id="note" Source="$(var.SolutionDir)\noteQmlInstaller\NoteQml.exe"/>
+            <File Id="QtCore" Source="$(var.SolutionDir)\noteQmlInstaller\QtCore4.dll"/>
+            <File Id="QtGui" Source="$(var.SolutionDir)\noteQmlInstaller\QtGui4.dll"/>
+            <File Id="QtSql" Source="$(var.SolutionDir)\noteQmlInstaller\QtSql4.dll"/>
+            <File Id="QtDeclarative" Source="$(var.SolutionDir)\noteQmlInstaller\QtDeclarative4.dll"/>
+            <File Id="QtNetwork" Source="$(var.SolutionDir)\noteQmlInstaller\QtNetwork4.dll"/>
+            <File Id="QtScript" Source="$(var.SolutionDir)\noteQmlInstaller\QtScript4.dll"/>
+            <File Id="QtXmlPatterns" Source="$(var.SolutionDir)\noteQmlInstaller\QtXmlPatterns4.dll"/>
+            <File Id="MSVCP100" Source="$(var.SolutionDir)\noteQmlInstaller\msvcp100.dll"/>
+            <File Id="MSVCR100" Source="$(var.SolutionDir)\noteQmlInstaller\msvcr100.dll"/>
+            <Shortcut  Id="DesktopShortcut" Directory="DesktopFolder" Advertise="yes" Name="note" Icon="note.exe" WorkingDirectory="INSTALLLOCATION" >
+              <Icon Id="note.exe" SourceFile="$(var.SolutionDir)\noteQmlInstaller\w.ico" />
+            </Shortcut>
+          </Component>
+
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <Feature Id="ProductFeature" Title="note" Level="1">
+      <!-- TODO: Remove the comments around this ComponentRef element and the Component above in order to add resources to this installer. -->
+      <!-- <ComponentRef Id="ProductComponent" /> -->
+
+      <!-- Note: The following ComponentGroupRef is required to pull in generated authoring from project references. -->
+      <ComponentRef Id="ProductComponent" />
+      <ComponentRef Id="ProductComponent1" />
+      <ComponentRef Id="Png" />
+      <ComponentRef Id="fileQml" />
+      <ComponentGroupRef Id="Product.Generated" />
+    </Feature>
+  </Product>
+</Wix>
