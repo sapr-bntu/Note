@@ -303,7 +303,7 @@ Rectangle{
             Text {
                 id: textWelcom
                 anchors.centerIn: parent
-                text: qsTr("Welcom!!!")
+                text: qsTr("Welcome!!!")
                 font.pixelSize: 48
                 color: "white"
                 font.bold: true
